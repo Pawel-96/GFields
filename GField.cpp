@@ -247,62 +247,12 @@ void Set_field(double *field, double *k_listed, double *Pk_listed)
 	
 	//imposing power spectrum******************************************
 	Impose_Pk_CUDA(field,k_listed,Pk_listed);
-	cout<<"Gaussian field set"<<endl;
+	cout<<"Gaussian field set, preparing for saving..."<<endl;
 	
 	return;
 }
 
 
-
-
-
-
-template <typename T> //reading columns from file to list of arrays - with fname as parameter
-void Fread(string fname, initializer_list<T*> arrays, initializer_list<int> cols, int array_size)
-{
-    ifstream f(fname.c_str());
-    if (!f.is_open())
-	{
-        cerr<<"Error opening file: "<<fname<<endl;
-        return;
-    }
-
-    vector<int> col_indices(cols.begin(), cols.end());
-    int nc_selected = col_indices.size();
-
-    // Ensure that arrays and cols sizes match
-    if (arrays.size()!= nc_selected)
-	{
-        cerr<<"Error: mismatch between number of vectors and columns :("<<endl;
-        return;
-    }
-
-    vector<T*> array_ptrs(arrays); //convert initializer_list to vector
-    T value;
-    string line;
-    int row=0,current_col,selected_index;
-
-    while (getline(f, line) && row < array_size)
-	{
-        istringstream iss(line);
-        current_col = 0;
-        selected_index = 0;
-
-        for (current_col=0;iss>>value;++current_col)
-		{
-            //whether current_col matches desired one
-            if (selected_index < nc_selected && current_col == col_indices[selected_index])
-			{
-                array_ptrs[selected_index][row]=value;
-                ++selected_index;
-            }
-        }
-        ++row;
-    }
-
-    f.close();
-	return;
-}
 
 
 
@@ -330,7 +280,6 @@ void Save(double *field)
 
 
 
-//nvcc -x cu --expt-relaxed-constexpr --compiler-options -std=c++14  -o GField.exe GField.cpp -lstdc++fs -lgsl -lcuda `pkg-config --cflags --libs opencv4` && ./GField.exe
 int main()
 {
 	srand(time(NULL));

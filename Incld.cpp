@@ -3,12 +3,17 @@
 
 
 
-void Command(string command) //makes process
+void Command(string command, int msg) //makes process
 {
 	FILE *fp;
 	int status;
 	fp=popen(command.c_str(),"w");
 	status=pclose(fp);
+	if(msg>0)
+	{
+		cout<<status<<endl;
+	}
+	
 	return;
 }
 
@@ -61,11 +66,6 @@ vector<string> Divide_string(string text, string delimiter) //dividing string ba
     }
     return divided;
 }
-
-
-
-
-
 
 
 
