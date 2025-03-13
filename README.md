@@ -1,0 +1,35 @@
+Small code for convenient Gaussian random field with user-provided power spectrum.  
+The code computes using GPU with CUDA.
+
+## Requirements
+- c++14 or newer
+- opencv2/opencv.hpp
+- curand_kernel.h  
+- Python 3  
+  - numpy and sympy library  
+
+## Compilation and running
+To compile, type: **make**  
+To run, type: **./GField.exe**  
+
+## Parameter file: **param.txt**
+- log2size  
+&emsp; log_2 of output size, it has to be integer, only 2^n x 2^n sizes are allowed  
+- Pk  
+&emsp; power spectrum formula in python format, e.g. 0.3*(k/100.)**(-1.2)  
+- Pk_probing  
+&emsp; multiplication factor for number of probed (listed) P(k)  
+- Pk_precision  
+&emsp; precision of P(k) list written into file  
+- fname_out  
+&emsp; filename of output Gaussian field  
+- fname_img  
+&emsp; filename of plot with output Gaussian field
+
+
+## Output
+The file **fname_out** defined in param.txt contains Gaussian field saved in ASCII format with columns:  
+x, y, f(x,y)  
+where x,y are coordinates and f(x,y) is Gaussian field value.  
+
+Additionally, the code creates **fname_img** with visualization of the field and **Pk.txt** with listed P(k) defined by user inside param.txt.
