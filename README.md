@@ -2,9 +2,9 @@ Small code generating Gaussian random field with user-provided power spectrum.
 The code computes using GPU with CUDA.
 
 ## Requirements
+- CUDA-capable GPU with CUDA installed
 - c++14 or newer
-- opencv2/opencv.hpp
-- curand_kernel.h  
+- opencv4
 - Python 3  
   - numpy and sympy library  
 
