@@ -1,4 +1,4 @@
-Small code for convenient Gaussian random field with user-provided power spectrum.  
+Small code generating Gaussian random field with user-provided power spectrum.  
 The code computes using GPU with CUDA.
 
 ## Requirements
@@ -14,13 +14,14 @@ To run, type: **./GField.exe**
 
 ## Parameter file: **param.txt**
 - log2size  
-&emsp; log_2 of output size, it has to be integer, only 2^n x 2^n sizes are allowed  
+&emsp; log_2 of output size, it has to be integer (only 2^n x 2^n output sizes are allowed)  
 - Pk  
 &emsp; power spectrum formula in python format, e.g. 0.3*(k/100.)**(-1.2)  
 - Pk_probing  
-&emsp; multiplication factor for number of probed (listed) P(k)  
+&emsp; multiplication factor for number of probed (listed) P(k) - number of datapoints in power spectrum  
+&emsp; will be Pk_probing*kmax (where kmax - maximal k)  
 - Pk_precision  
-&emsp; precision of P(k) list written into file  
+&emsp; precision of P(k) list written into file, e.g. %.6f  
 - fname_out  
 &emsp; filename of output Gaussian field  
 - fname_img  
@@ -33,3 +34,6 @@ x, y, f(x,y)
 where x,y are coordinates and f(x,y) is Gaussian field value.  
 
 Additionally, the code creates **fname_img** with visualization of the field and **Pk.txt** with listed P(k) defined by user inside param.txt.
+
+This repository already contains example file with Gaussian field (Gaussianfield.txt) and plot (Heatmap.png), generated according to settings in current param.txt
+parameter file.
