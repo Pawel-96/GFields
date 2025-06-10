@@ -1,3 +1,27 @@
+//****************************************************************************************//
+//                                                                                        //
+// Copyright 2025 Paweł Drozda                                                            //
+//                                                                                        //
+// This file is part of GField.                                                           //
+//                                                                                        //
+//To the extent possible under law, the author has dedicated this software	          //
+// to the public domain under the Creative Commons CC0 1.0 Universal License.             //
+//                                                                                        //
+// GField is distributed in the hope that it will be useful, but                          //
+// WITHOUT ANY WARRANTY; without even the implied warranty of                             //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                                   //
+//                                                                                        //
+// You should have received a copy of the CC0-1.0 License                                 //
+// along with GField.  If not, see <ttps://creativecommons.org/publicdomain/zero/1.0/>.   //
+//                                                                                        //
+//                                                                                        //
+//****************************************************************************************//
+
+
+
+
+
+
 #include "Incld.h"
 
 
