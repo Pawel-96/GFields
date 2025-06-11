@@ -3,6 +3,7 @@ The code computes using GPU with CUDA.
 
 ## Requirements
 - CUDA-capable GPU with CUDA installed
+- cuFFT
 - c++14 or newer
 - opencv4
 - Python 3  
