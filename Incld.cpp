@@ -111,157 +111,117 @@ vector<string> Get_parameter(string fname, string par_name)
 
 
 
-
-
-int FFT(int dir,int m,double *x,double *y)
+//packing real, imag arrays into cufft-working one
+__global__ void pack_arr_cufft(const double* real, const double* imag, cufftDoubleComplex* complex_out, int N)
 {
-	long nn,i,i1,j,k,i2,l,l1,l2;
-	double c1,c2,tx,ty,t1,t2,u1,u2,z;
-
-	nn = 1;
-	for (i=0;i<m;i++)
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx < N)
 	{
-		nn*= 2;
-	}
-
-	//bit reversal
-	i2 = nn >> 1;
-	j = 0;
-	for (i=0;i<nn-1;i++)
-	{
-		if (i < j)
-		{
-			tx = x[i];
-			ty = y[i];
-			x[i] = x[j];
-			y[i] = y[j];
-			x[j] = tx;
-			y[j] = ty;
-		}
-		k = i2;
-		while (k <= j)
-		{
-			j -= k;
-			k >>= 1;
-		}
-		j += k;
-	}
-
-	//computing FFT
-	c1 = -1.0;
-	c2 = 0.0;
-	l2 = 1;
-	for (l=0;l<m;l++)
-	{
-		l1 = l2;
-		l2 <<= 1;
-		u1 = 1.0;
-		u2 = 0.0;
-		for (j=0;j<l1;j++)
-		{
-			for (i=j;i<nn;i+=l2)
-			{
-				i1 = i + l1;
-				t1 = u1 * x[i1] - u2 * y[i1];
-				t2 = u1 * y[i1] + u2 * x[i1];
-				x[i1] = x[i] - t1;
-				y[i1] = y[i] - t2;
-				x[i] += t1;
-				y[i] += t2;
-			}
-			z =  u1 * c1 - u2 * c2;
-			u2 = u1 * c2 + u2 * c1;
-			u1 = z;
-		}
-		c2 = sqrt((1.0 - c1) / 2.0);
-		if (dir == 1)
-		{
-			c2 = -c2;
-		}
-		c1 = sqrt((1.0 + c1) / 2.0);
-	}
-
-	/* Scaling for forward transform */
-	if (dir == 1)
-	{
-		for (i=0;i<nn;i++)
-		{
-			x[i] /= (double)nn;
-			y[i] /= (double)nn;
-		}
-	}
-
-
-   return true;
+        complex_out[idx].x = real[idx];
+        complex_out[idx].y = imag[idx];
+    }
 }
 
 
 
 
 
-//2D FFT: (in_real,in_imag)->FFT(in_real,in_imag); real,imag of size [s*s]
-int FFT2D_flat(double *img_real, double *img_imag, int s, int direction)
+
+//unpacking back into real,imag arrays
+__global__ void unpack_arr_cufft(const cufftDoubleComplex* complex_in, double* real, double* imag, int N)
 {
-   int i,j;
-   int m=log2(s);
-   int loc_flat;
-   double *real,*imag;
-
-   //Transforming rows
-   real=(double *)malloc(s * sizeof(double));
-   imag=(double *)malloc(s * sizeof(double));
-   if(real== NULL or imag==NULL){return false;}
-
-	for (j=0;j<s;++j)
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx < N)
 	{
-		for (i=0;i<s;++i)
-		{
-			loc_flat=j * s + i;
-			
-			real[i]=img_real[loc_flat];
-			imag[i]=img_imag[loc_flat];
-		}
-		FFT(direction,m,real,imag);
-		for (i=0;i<s;++i)
-		{
-			loc_flat=j * s + i;
-			
-			img_real[loc_flat]=real[i];
-			img_imag[loc_flat]=imag[i];
-      }
-   }
-   free(real);
-   free(imag);
-
-   //Transforming columns
-   real=(double *)malloc(s * sizeof(double));
-   imag=(double *)malloc(s * sizeof(double));
-   if(real==NULL or imag==NULL){return false;}
-
-   for (i=0;i<s;++i)
-   {
-		for (j=0;j<s;++j)
-		{
-			loc_flat=j * s + i;
-			
-			real[j]=img_real[loc_flat];
-			imag[j]=img_imag[loc_flat];
-      }
-      FFT(direction,m,real,imag);
-      for (j=0;j<s;++j)
-	  {
-			loc_flat=j * s + i;
-			
-			img_real[loc_flat]=real[j];
-			img_imag[loc_flat]=imag[j];
-      }
-   }
-   free(real);
-   free(imag);
-
-   return true;
+        real[idx] = complex_in[idx].x;
+        imag[idx] = complex_in[idx].y;
+    }
 }
 
+
+
+
+
+//normalizing inverse fft output
+__global__ void normalize_invfft(cufftDoubleComplex* data, int N)
+{
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx < N)
+	{
+        data[idx].x /= N;
+        data[idx].y /= N;
+    }
+}
+
+
+
+
+
+void FFT2D_flat(double *img_real, double *img_imag, int s, int direction)
+{
+    const int N = s * s;
+
+    //allocate memory
+    double* d_real;
+    double* d_imag;
+    cudaMalloc((void**)&d_real, sizeof(double) * N);
+    cudaMalloc((void**)&d_imag, sizeof(double) * N);
+
+    // copy data to GPU
+    cudaMemcpy(d_real, img_real, sizeof(double) * N, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_imag, img_imag, sizeof(double) * N, cudaMemcpyHostToDevice);
+
+    //create plan
+    cufftHandle plan;
+    cufftResult result = cufftPlan2d(&plan, s, s, CUFFT_Z2Z); // Z2Z = double complex
+    if (result != CUFFT_SUCCESS)
+	{
+        cerr <<"[Error]: failed creating cuFFT plan:("<<endl;
+        return;
+    }
+	
+
+    // packing for cuFFT function:
+    cufftDoubleComplex* d_data;
+    cudaMalloc((void**)&d_data, sizeof(cufftDoubleComplex) * N);
+	
+	//1-D threads-grid
+	int blocks = (N + threadsPerBlock - 1) / threadsPerBlock;
+
+	pack_arr_cufft<<<blocks, threadsPerBlock>>>(d_real, d_imag, d_data, N);
+	cudaDeviceSynchronize();
+	
+	
+    //running FFT
+	if(direction==1)
+	{
+		cufftExecZ2Z(plan, d_data, d_data, CUFFT_FORWARD);
+	}
+	else
+	{
+		cufftExecZ2Z(plan, d_data, d_data, CUFFT_INVERSE);
+		
+		normalize_invfft<<<blocks, threadsPerBlock>>>(d_data, N);
+		cudaDeviceSynchronize();
+	}
+    
+
+	//unpacking back to real and imaginary arrays
+	unpack_arr_cufft<<<blocks, threadsPerBlock>>>(d_data, d_real, d_imag, N);
+	cudaDeviceSynchronize();
+	
+	
+	// copy data back to CPU
+    cudaMemcpy(img_real,d_real, sizeof(double) * N, cudaMemcpyDeviceToHost);
+    cudaMemcpy(img_imag,d_imag, sizeof(double) * N, cudaMemcpyDeviceToHost);
+
+
+    cufftDestroy(plan);
+    cudaFree(d_real);
+    cudaFree(d_imag);
+    cudaFree(d_data);
+    return;
+}
 
 
 

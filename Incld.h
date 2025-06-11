@@ -1,10 +1,3 @@
-/*
-FFT functions are based on: https://paulbourke.net/miscellaneous/dft/
-All other functions written by Paweł Drozda
-
-*/
-
-
 #ifndef INCDL_H
 #define INCDL_H
 
@@ -20,8 +13,10 @@ All other functions written by Paweł Drozda
 //#include<dirent.h> //for reading files in dir without filesystem
 //#include <sys/stat.h> //for mkdir
 //#include<sys/types.h>
-#define BLOCK_SIZE 8  //block size of GPU computation
+#define BLOCK_SIZE 8  //block size of GPU computation - 2D grid
+#define threadsPerBlock 256 //threads per block - 1D grid
 #include <curand_kernel.h> //for random in CUDA
+#include <cufft.h> //FFT in CUDA
 #include<algorithm>
 
 using namespace std;
@@ -43,12 +38,8 @@ vector<string> Divide_string(string text, string delimiter); //dividing string b
 vector<string> Get_parameter(string fname, string par_name);
 
 
-//1D FFT
-int FFT(int dir,int m,double *x,double *y);
-
-
-//2D FFT: (in_real,in_imag)->FFT(in_real,in_imag); real,imag of size [s*s]
-int FFT2D_flat(double *img_real, double *img_imag, int s, int direction);
+//2D FFT: (in_real,in_imag)->FFT(in_real,in_imag); real,imag of size [s*s], working with cuFFT
+void FFT2D_flat(double *img_real, double *img_imag, int s, int direction);
 
 
 
