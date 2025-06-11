@@ -118,14 +118,13 @@ int FFT(int dir,int m,double *x,double *y)
 	long nn,i,i1,j,k,i2,l,l1,l2;
 	double c1,c2,tx,ty,t1,t2,u1,u2,z;
 
-	/* Calculate the number of points */
 	nn = 1;
 	for (i=0;i<m;i++)
 	{
-		nn *= 2;
+		nn*= 2;
 	}
 
-	/* Do the bit reversal */
+	//bit reversal
 	i2 = nn >> 1;
 	j = 0;
 	for (i=0;i<nn-1;i++)
@@ -148,7 +147,7 @@ int FFT(int dir,int m,double *x,double *y)
 		j += k;
 	}
 
-	/* Compute the FFT */
+	//computing FFT
 	c1 = -1.0;
 	c2 = 0.0;
 	l2 = 1;
@@ -234,7 +233,7 @@ int FFT2D_flat(double *img_real, double *img_imag, int s, int direction)
    free(real);
    free(imag);
 
-   //transforming columns
+   //Transforming columns
    real=(double *)malloc(s * sizeof(double));
    imag=(double *)malloc(s * sizeof(double));
    if(real==NULL or imag==NULL){return false;}
