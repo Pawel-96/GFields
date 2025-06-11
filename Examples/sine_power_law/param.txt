@@ -1,0 +1,11 @@
+#**********Parameter file**********#
+
+#power spectrum------------------------------------
+log2size 8 #----------------------log_2(output_size)
+Pk sin(k/10)**2*(k/100)**(-1.5)   #---------power spectrum
+Pk_probing 1 #------------------power spectrum list probing
+Pk_precision %.6f #---------------precision for power spectrum file
+
+#output--------------------------------------------
+fname_out Gaussianfield.txt #-----output filename (data)
+fname_img Heatmap.png #-----------output filename (plot)

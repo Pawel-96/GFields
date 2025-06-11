@@ -15,7 +15,7 @@ precision=tuple(val[par=='Pk_precision'].tolist())[0]
 #---------------------------------
 
 
-maxk=2**log2s* 1.415 +1 #upper boundary for k
+maxk=2**log2s*0.5* 1.415 +1 #upper boundary for k
 n=math.ceil(probing * maxk) #number of datapoints for P(k)
 
 

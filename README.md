@@ -37,3 +37,13 @@ Additionally, the code creates **fname_img** with visualization of the field and
 
 This repository already contains example file with Gaussian field (Gaussianfield.txt) and plot (Heatmap.png), generated according to settings in current param.txt
 parameter file.
+
+
+## Examples  
+The directory Exmaples/ contains example runs containing Gaussian field (Gaussianfield.txt), plot (Heatmap.png) and power spectrum (Pk.txt) files,  
+according to correct param.txt parameter file.  
+
+
+## Troubleshooting
+If output contains only zeros, please check the CUDA installation.
+

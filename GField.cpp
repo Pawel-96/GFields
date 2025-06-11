@@ -36,7 +36,7 @@ const string Pkform=Get_parameter(paramfile,"Pk")[0]; //P(k) formula - for heatm
 
 const int s=pow(2,log2size);
 const int sarr=s*s;
-const int nk=ceil(probing*(1.*s*1.415+1)); //number of scales in Pk file
+const int nk=ceil(probing*(.5*s*1.415+1)); //number of scales in Pk file
 
 
 
@@ -222,6 +222,13 @@ void Impose_Pk_CUDA(double *field, double *k_listed, double *Pk_listed)
 	imposePk_onepix <<< gridSize, blockSize >>> (d_field,d_fieldimag,d_k,d_Pk,nk,s);
 	cudaDeviceSynchronize();
 	
+	cudaError_t err = cudaGetLastError();
+	if (err!=cudaSuccess) //errors which don't show up normally
+	{
+		cerr <<"CUDA Error: "<<cudaGetErrorString(err)<<endl;
+	}
+    
+	
 	//copy data back (k,Pk not necessary anymore)
 	cudaMemcpy(field,d_field,sarr2,cudaMemcpyDeviceToHost);
 	cudaMemcpy(field_imag,d_fieldimag,sarr2,cudaMemcpyDeviceToHost);
@@ -263,6 +270,12 @@ void Set_field(double *field, double *k_listed, double *Pk_listed)
 	//running each pixel on GPU
 	field_onepix <<< gridSize, blockSize >>> (d_field,s,seed);
 	cudaDeviceSynchronize();
+	
+	cudaError_t err = cudaGetLastError();
+	if (err!=cudaSuccess) //errors which don't show up normally
+	{
+		cerr <<"CUDA Error: "<<cudaGetErrorString(err)<<endl;
+	}
 	
 	//copying data back and freeing memory
 	cudaMemcpy(field,d_field,sarr2,cudaMemcpyDeviceToHost);
