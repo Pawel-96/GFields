@@ -12,14 +12,16 @@ The code computes using GPU with CUDA.
 To compile, type: **make**  
 To run, type: **./GField.exe**  
 
+\[Note\]: the code executes external python scripts: Make_pklist.py and Plot.py using system-level calls.
+
 ## Parameter file: **param.txt**
 - log2size  
 &emsp; log_2 of output size, it has to be integer (only 2^n x 2^n output sizes are allowed)  
 - Pk  
 &emsp; power spectrum formula in python format, e.g. 0.3*(k/100.)**(-1.2)  
 - Pk_probing  
-&emsp; multiplication factor for number of probed (listed) P(k) - number of datapoints in power spectrum  
-&emsp; will be Pk_probing*kmax (where kmax - maximal k)  
+&emsp; multiplication factor for number of probed (listed) P(k);  
+&emsp; number of datapoints in power spectrum  will be Pk_probing\*kmax (where kmax - maximal k)  
 - Pk_precision  
 &emsp; precision of P(k) list written into file, e.g. %.6f  
 - fname_out  
@@ -35,5 +37,15 @@ where x,y are coordinates and f(x,y) is Gaussian field value.
 
 Additionally, the code creates **fname_img** with visualization of the field and **Pk.txt** with listed P(k) defined by user inside param.txt.
 
-This repository already contains example file with Gaussian field (Gaussianfield.txt) and plot (Heatmap.png), generated according to settings in current param.txt
-parameter file.
+
+## Examples  
+The directory Examples/ contains example runs with Gaussian field (Gaussianfield.txt), plot (Heatmap.png) and power spectrum (Pk.txt) files,  
+according to corresponding param.txt parameter file.  
+
+
+## Troubleshooting
+If output contains only zeros, please check the CUDA installation.
+
+
+## Future improvements
+- Implement more robust combination of cpp and python (avoid system calls)
