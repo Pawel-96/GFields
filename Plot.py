@@ -1,12 +1,12 @@
 #! /usr/bin/python3
 import numpy as np
 import math
-import matplotlib as mpl
+#import matplotlib as mpl
 import matplotlib.pyplot as plt
-from scipy.interpolate import CubicSpline
-from matplotlib.colors import ListedColormap, LinearSegmentedColormap
-from scipy import interpolate
-from scipy.interpolate import RegularGridInterpolator
+#from scipy.interpolate import CubicSpline
+#from matplotlib.colors import ListedColormap, LinearSegmentedColormap
+#from scipy import interpolate
+#from scipy.interpolate import RegularGridInterpolator
 import sys
 
 fname=sys.argv[1] #data filename
