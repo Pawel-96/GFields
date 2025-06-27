@@ -7,7 +7,7 @@ The code computes using GPU with CUDA.
 - c++14 or newer
 - opencv4
 - Python 3  
-  - numpy and sympy library  
+  - numpy, sympy, matplotlib libraries  
 
 ## Compilation and running
 To compile, type: **make**  
@@ -50,3 +50,7 @@ If output contains only zeros, please check the CUDA installation.
 
 ## Future improvements
 - Implement more robust combination of cpp and python (avoid system calls)
+
+##  
+This project uses external libraries including OpenCV and NVIDIA CUDA Toolkit headers (cuFFT, cuRAND).
+Users must ensure they have proper installations of these libraries where applicable.
