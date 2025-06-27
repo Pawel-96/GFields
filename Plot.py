@@ -17,22 +17,13 @@ Pkform=sys.argv[4]
 axtitle='P(k)='+Pkform
 titlecolor='midnightblue'
 
-scales=np.unique(np.genfromtxt(fname, usecols=(0),unpack=True))
-
-axa_range=[min(scales),max(scales)]
-axb_range=[min(scales),max(scales)]
-[naxa,naxb]=[len(scales),len(scales)]
-
 background_color='white' #'#001b23'
 ax_color='black' #axes and text color
 grid_color='black'
-grid=[naxa,naxb] #data grid of nnR,nbins
-
 
 
 #contours
 #contours_vals=[-2,-1,0,1,2] 
-
 
 
 
